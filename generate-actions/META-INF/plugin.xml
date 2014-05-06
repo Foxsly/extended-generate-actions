@@ -1,0 +1,53 @@
+<idea-plugin version="2">
+    <id>org.foxsly.idea.extended.generate.actions</id>
+    <name>Extended Generate Actions</name>
+    <version>0.1</version>
+    <idea-version since-build="129.451"/>
+    <vendor email="timothylbelcher@gmail.com" url="TODO https://bitbucket.org/bhandy/idea-missing-functionality">
+        Timothy Belcher
+    </vendor>
+
+    <actions>
+        <action id="GeneratePreconditionsConstructor"
+                class="org.foxsly.idea.generator.action.GeneratePreconditionsConstructorAction"
+                text="Preconditions Constructor"
+                description="Generates a constructor with a preconditions check">
+            <add-to-group group-id="GenerateGroup" anchor="last"/>
+        </action>
+        <action id="GenerateCollectionSetters" class="org.foxsly.idea.generator.action.GenerateCollectionSettersAction"
+                text="Generate Collection Setters"
+                description="Generates add and addAll methods for collections">
+            <add-to-group group-id="GenerateGroup" anchor="last"/>
+        </action>
+    </actions>
+    `
+    <description>
+        <![CDATA[
+        Adds additional actions to the Generate (Alt + Insert) dialog.
+        <ul>
+            <li>
+                Ability to generate a constructor that adds a Guava Preconditions.checkNotNull() to each parameter.
+            </li>
+            <li>
+                Ability to generate add and addAll setters for field variables that are Collections.
+            </li>
+        </ul>
+        ]]>
+    </description>
+
+    <change-notes>
+        <![CDATA[
+        <ul>
+            <li> Version 0.1 </li>
+            <ul>
+                <li>
+                    Added action for generating Preconditions constructors
+                </li>
+                <li>
+                    Added action for generating add/addAll methods for collections
+                </li>
+            </ul>
+        </ul>
+        ]]>
+    </change-notes>
+</idea-plugin>
