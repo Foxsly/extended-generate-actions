@@ -20,7 +20,7 @@
             <add-to-group group-id="GenerateGroup" anchor="last"/>
         </action>
     </actions>
-    `
+
     <description>
         <![CDATA[
         Adds additional actions to the Generate (Alt + Insert) dialog.
