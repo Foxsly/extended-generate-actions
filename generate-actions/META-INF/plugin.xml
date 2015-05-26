@@ -3,7 +3,7 @@
     <name>Extended Generate Actions</name>
     <version>0.2</version>
     <idea-version since-build="129.451"/>
-    <vendor email="timothylbelcher@gmail.com" url="TODO https://bitbucket.org/bhandy/idea-missing-functionality">
+    <vendor email="timothylbelcher@gmail.com" url="https://github.com/Foxsly/extended-generate-actions">
         Timothy Belcher
     </vendor>
 
@@ -26,10 +26,10 @@
         Adds additional actions to the Generate (Alt + Insert) dialog.
         <ul>
             <li>
-                Ability to generate a constructor that adds a Guava Preconditions.checkNotNull() to each parameter.
+                Ability to generate a constructor that adds a Guava Preconditions.checkNotNull() to each non-primitive parameter.
             </li>
             <li>
-                Ability to generate add and addAll setters for field variables that are Collections.
+                Ability to generate add and addAll 'setters' for field variables that are Collections.
             </li>
         </ul>
         ]]>
