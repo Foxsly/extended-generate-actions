@@ -38,7 +38,7 @@
     <change-notes>
         <![CDATA[
         <ul>
-            <li> Version 0.1 </li>
+            <li> Version 0.2 </li>
             <ul>
                 <li>
                     Moved the generate preconditions constructor action to directly below the generate constructor action
