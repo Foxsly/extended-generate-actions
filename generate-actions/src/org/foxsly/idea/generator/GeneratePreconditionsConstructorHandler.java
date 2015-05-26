@@ -70,6 +70,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.foxsly.idea.util.ImportUtils.addStaticImportToClass;
+
 /**
  * @author belcheti
  */
@@ -81,12 +83,12 @@ public class GeneratePreconditionsConstructorHandler extends GenerateConstructor
     protected List<? extends GenerationInfo> generateMemberPrototypes(PsiClass aClass, ClassMember[] members) throws IncorrectOperationException {
         List<PsiMethod> baseConstructors = new ArrayList<PsiMethod>();
         List<PsiField> fieldsVector = new ArrayList<PsiField>();
-        for (ClassMember member1 : members) {
-            PsiElement member = ((PsiElementClassMember) member1).getElement();
-            if (member instanceof PsiMethod) {
-                baseConstructors.add((PsiMethod) member);
+        for (ClassMember member : members) {
+            PsiElement element = ((PsiElementClassMember) member).getElement();
+            if (element instanceof PsiMethod) {
+                baseConstructors.add((PsiMethod) element);
             } else {
-                fieldsVector.add((PsiField) member);
+                fieldsVector.add((PsiField) element);
             }
         }
         PsiField[] fields = fieldsVector.toArray(new PsiField[fieldsVector.size()]);
@@ -96,14 +98,14 @@ public class GeneratePreconditionsConstructorHandler extends GenerateConstructor
             final PsiClass superClass = aClass.getSuperClass();
             assert superClass != null;
             PsiSubstitutor substitutor = TypeConversionUtil.getSuperClassSubstitutor(superClass, aClass, PsiSubstitutor.EMPTY);
+            addStaticImportToClass("com.google.common.base.Preconditions", "checkNotNull", aClass);
             for (PsiMethod baseConstructor : baseConstructors) {
                 baseConstructor = GenerateMembersUtil.substituteGenericMethod(baseConstructor, substitutor, aClass);
-                constructors.add(new PsiGenerationInfo(generateConstructorPrototype(aClass, baseConstructor, fields)));
+                constructors.add(new PsiGenerationInfo<PsiMethod>(generateConstructorPrototype(aClass, baseConstructor, fields)));
             }
             return filterOutAlreadyInsertedConstructors(aClass, constructors);
         }
-        final List<GenerationInfo> constructors =
-                Collections.<GenerationInfo>singletonList(new PsiGenerationInfo(generateConstructorPrototype(aClass, null, fields)));
+        final List<GenerationInfo> constructors = Collections.<GenerationInfo>singletonList(new PsiGenerationInfo<PsiMethod>(generateConstructorPrototype(aClass, null, fields)));
         return filterOutAlreadyInsertedConstructors(aClass, constructors);
     }
 
@@ -126,9 +128,7 @@ public class GeneratePreconditionsConstructorHandler extends GenerateConstructor
         PsiMethod constructor = factory.createConstructor(aClass.getName(), aClass);
         String modifier = PsiUtil.getMaximumModifierForMember(aClass, false);
 
-        if (modifier != null) {
-            PsiUtil.setModifierProperty(constructor, modifier, true);
-        }
+        PsiUtil.setModifierProperty(constructor, modifier, true);
 
         if (baseConstructor != null) {
             PsiJavaCodeReferenceElement[] throwRefs = baseConstructor.getThrowsList().getReferenceElements();

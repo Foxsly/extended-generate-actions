@@ -39,21 +39,30 @@ package org.foxsly.idea.generator;
 import com.intellij.codeInsight.generation.JavaConstructorBodyWithSuperCallGenerator;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiParameter;
+import com.intellij.psi.util.TypeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author belcheti
  */
 public class JavaConstructorBodyWithPreconditionsNotNullGenerator extends JavaConstructorBodyWithSuperCallGenerator {
+
     @Override
     public void generateFieldInitialization(@NotNull StringBuilder buffer, @NotNull PsiField[] fields, @NotNull PsiParameter[] parameters) {
         for (int i = 0, length = fields.length; i < length; i++) {
-            String fieldName = fields[i].getName();
+            PsiField field = fields[i];
+            String fieldName = field.getName();
             String paramName = parameters[i].getName();
             if (fieldName.equals(paramName)) {
                 buffer.append("this.");
             }
-            buffer.append(fieldName).append("= Preconditions.checkNotNull(").append(paramName).append(");\n");
+            buffer.append(fieldName).append("= ");
+            if (!TypeConversionUtil.isPrimitiveAndNotNull(field.getType())) {
+                buffer.append("checkNotNull(").append(paramName).append(")");
+            } else {
+                buffer.append(paramName);
+            }
+            buffer.append(";\n");
         }
     }
 }

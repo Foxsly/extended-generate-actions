@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>org.foxsly.idea.extended.generate.actions</id>
     <name>Extended Generate Actions</name>
-    <version>0.1</version>
+    <version>0.2</version>
     <idea-version since-build="129.451"/>
     <vendor email="timothylbelcher@gmail.com" url="TODO https://bitbucket.org/bhandy/idea-missing-functionality">
         Timothy Belcher
@@ -12,12 +12,12 @@
                 class="org.foxsly.idea.generator.action.GeneratePreconditionsConstructorAction"
                 text="Preconditions Constructor"
                 description="Generates a constructor with a preconditions check">
-            <add-to-group group-id="GenerateGroup" anchor="last"/>
+            <add-to-group group-id="JavaGenerateGroup1" anchor="after" relative-to-action="GenerateConstructor"/>
         </action>
         <action id="GenerateCollectionSetters" class="org.foxsly.idea.generator.action.GenerateCollectionSettersAction"
                 text="Generate Collection Setters"
                 description="Generates add and addAll methods for collections">
-            <add-to-group group-id="GenerateGroup" anchor="last"/>
+            <add-to-group group-id="JavaGenerateGroup1" anchor="after" relative-to-action="GenerateGetterAndSetter"/>
         </action>
     </actions>
 
@@ -38,6 +38,18 @@
     <change-notes>
         <![CDATA[
         <ul>
+            <li> Version 0.1 </li>
+            <ul>
+                <li>
+                    Moved the generate preconditions constructor action to directly below the generate constructor action
+                </li>
+                <li>
+                    Added support for not calling checkNotNull on primitive objects
+                </li>
+                <li>
+                    Added static import of checkNotNull
+                </li>
+            </ul>
             <li> Version 0.1 </li>
             <ul>
                 <li>
