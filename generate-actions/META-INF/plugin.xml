@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>org.foxsly.idea.extended.generate.actions</id>
     <name>Extended Generate Actions</name>
-    <version>0.2</version>
+    <version>0.3</version>
     <idea-version since-build="129.451"/>
     <vendor email="timothylbelcher@gmail.com" url="https://github.com/Foxsly/extended-generate-actions">
         Timothy Belcher
@@ -38,6 +38,15 @@
     <change-notes>
         <![CDATA[
         <ul>
+            <li> Version 0.3 </li>
+            <ul>
+                <li>
+                    Fixed issue with new constructor being inserted in the wrong spot
+                </li>
+                <li>
+                    Cleaned up static imports
+                </li>
+            </ul>
             <li> Version 0.2 </li>
             <ul>
                 <li>

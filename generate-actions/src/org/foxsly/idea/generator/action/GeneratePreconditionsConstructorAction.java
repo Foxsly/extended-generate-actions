@@ -37,8 +37,16 @@
 package org.foxsly.idea.generator.action;
 
 import com.intellij.codeInsight.generation.actions.BaseGenerateAction;
+import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiAnonymousClass;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.PsiUtilBase;
+import com.siyeh.ig.psiutils.ImportUtils;
 import org.foxsly.idea.generator.GeneratePreconditionsConstructorHandler;
 
 /**
@@ -52,5 +60,19 @@ public class GeneratePreconditionsConstructorAction extends BaseGenerateAction {
     @Override
     protected boolean isValidForClass(final PsiClass targetClass) {
         return super.isValidForClass(targetClass) && !(targetClass instanceof PsiAnonymousClass);
+    }
+
+    @Override
+    public void actionPerformedImpl(Project project, Editor editor) {
+        super.actionPerformedImpl(project, editor);
+        final PsiFile psiFile = PsiUtilBase.getPsiFileInEditor(editor, project);
+        PsiClass psiClass = PsiTreeUtil.getChildOfType(psiFile, PsiClass.class);
+        final PsiElement context = psiClass.getFields()[0];
+        WriteCommandAction.runWriteCommandAction(project, new Runnable() {
+            @Override
+            public void run() {
+                ImportUtils.addStaticImport("com.google.common.base.Preconditions", "checkNotNull", context);
+            }
+        });
     }
 }

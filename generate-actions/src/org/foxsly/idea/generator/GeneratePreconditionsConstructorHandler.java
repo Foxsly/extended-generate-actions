@@ -48,6 +48,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.CommonClassNames;
 import com.intellij.psi.JVMElementFactories;
 import com.intellij.psi.JVMElementFactory;
+import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiCompiledElement;
 import com.intellij.psi.PsiElement;
@@ -60,7 +61,6 @@ import com.intellij.psi.PsiSubstitutor;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.codeStyle.VariableKind;
-import com.intellij.psi.util.PsiUtil;
 import com.intellij.psi.util.TypeConversionUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
@@ -70,13 +70,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.foxsly.idea.util.ImportUtils.addStaticImportToClass;
-
 /**
  * @author belcheti
  */
 public class GeneratePreconditionsConstructorHandler extends GenerateConstructorHandler {
     private static final Logger LOG = Logger.getInstance("org.foxsly.idea.generator.GeneratePreconditionsConstructorHandler");
+    private static final ConstructorBodyGenerator generator = new JavaConstructorBodyWithPreconditionsNotNullGenerator();
 
     @Override
     @NotNull
@@ -98,7 +97,6 @@ public class GeneratePreconditionsConstructorHandler extends GenerateConstructor
             final PsiClass superClass = aClass.getSuperClass();
             assert superClass != null;
             PsiSubstitutor substitutor = TypeConversionUtil.getSuperClassSubstitutor(superClass, aClass, PsiSubstitutor.EMPTY);
-            addStaticImportToClass("com.google.common.base.Preconditions", "checkNotNull", aClass);
             for (PsiMethod baseConstructor : baseConstructors) {
                 baseConstructor = GenerateMembersUtil.substituteGenericMethod(baseConstructor, substitutor, aClass);
                 constructors.add(new PsiGenerationInfo<PsiMethod>(generateConstructorPrototype(aClass, baseConstructor, fields)));
@@ -126,9 +124,8 @@ public class GeneratePreconditionsConstructorHandler extends GenerateConstructor
         CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(manager.getProject());
 
         PsiMethod constructor = factory.createConstructor(aClass.getName(), aClass);
-        String modifier = PsiUtil.getMaximumModifierForMember(aClass, false);
 
-        PsiUtil.setModifierProperty(constructor, modifier, true);
+        GenerateMembersUtil.setVisibility(aClass, constructor);
 
         if (baseConstructor != null) {
             PsiJavaCodeReferenceElement[] throwRefs = baseConstructor.getThrowsList().getReferenceElements();
@@ -169,9 +166,9 @@ public class GeneratePreconditionsConstructorHandler extends GenerateConstructor
             PsiParameter parm = factory.createParameter(parmName, field.getType(), aClass);
 
             final NullableNotNullManager nullableManager = NullableNotNullManager.getInstance(field.getProject());
-            final String notNull = nullableManager.getNotNull(field);
+            final PsiAnnotation notNull = nullableManager.copyNotNullAnnotation(field);
             if (notNull != null) {
-                parm.getModifierList().addAfter(factory.createAnnotationFromText("@" + notNull, field), null);
+                parm.getModifierList().addAfter(notNull, null);
             }
 
             constructor.getParameterList().add(parm);
@@ -179,7 +176,6 @@ public class GeneratePreconditionsConstructorHandler extends GenerateConstructor
             fieldParams.add(parm);
         }
 
-        ConstructorBodyGenerator generator = new JavaConstructorBodyWithPreconditionsNotNullGenerator();
         @NonNls StringBuilder buffer = new StringBuilder();
         generator.start(buffer, constructor.getName(), PsiParameter.EMPTY_ARRAY);
         if (isNotEnum) {
